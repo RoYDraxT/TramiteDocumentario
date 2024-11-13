@@ -50,16 +50,9 @@
                                                     <input type="email" class="form-control" id="signup-email" name="signup-email" placeholder="eg: john@example.com">
                                                 </div>
                                             </div>
-                                            <div class="form-group row mb-0">
-                                                <div class="col-sm-6 push">
-                                                    <label class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" id="signup-terms" name="signup-terms">
-                                                        <span class="custom-control-indicator"></span>
-                                                        <span class="custom-control-description">I agree to Terms &amp; Conditions</span>
-                                                    </label>
-                                                </div>
-                                                <div class="col-sm-6 text-sm-right push">
-                                                    <button type="submit" class="btn btn-alt-success">
+                                            <div class="form-group row justify-content-center mb-0">
+                                                <div class="col-sm-6 text-center">
+                                                    <button type="submit" class="btn btn-alt-success" id="btnrecuperar">
                                                         <i class="fa fa-plus mr-10"></i> Recuperar
                                                     </button>
                                                 </div>
@@ -67,9 +60,6 @@
                                         </div>
                                         <div class="block-content bg-body-light">
                                             <div class="form-group text-center">
-                                                <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="#" data-toggle="modal" data-target="#modal-terms">
-                                                    <i class="fa fa-book text-muted mr-5"></i> Leer Términos y Condiciones
-                                                </a>
                                                 <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="../">
                                                     <i class="fa fa-user text-muted mr-5"></i> Acceso
                                                 </a>
@@ -77,14 +67,12 @@
                                         </div>
                                     </div>
                                 </form>
-                                <!-- END Sign Up Form -->
+
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- END Page Content -->
             </main>
-            <!-- END Main Container -->
         </div>
 
         <div class="modal fade" id="modal-terms" tabindex="-1" role="dialog" aria-labelledby="modal-terms" aria-hidden="true">

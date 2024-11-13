@@ -53,7 +53,7 @@
 		public function get_correo_usuario($usu_correo){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT * FROM usuario WHERE usu_correo=? AND est=1;";
+            $sql="select * from usuario where usu_correo=? and est=1;";
             $sql=$conectar->prepare($sql);
 			$sql->bindValue(1,$usu_correo);
 			$sql->execute();
