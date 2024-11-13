@@ -6,7 +6,7 @@
     switch($_GET["op"]){
 
         case "insert":
-            $datos = $documento->insert_partes($_POST["usu_id"]);
+            $datos = $documento->insert_documento($_POST["usu_id"]);
             if(is_array($datos)==true and count($datos)>0){
                 foreach($datos as $row)
                 {
@@ -17,7 +17,10 @@
         break;
 
         case "update":
-            $partes->update_partes($_POST["doc_id"],$_POST["doc_asun"],$_POST["doc_desc"]);
+            $documento->update_documento($_POST["doc_id"],$_POST["doc_asun"],$_POST["doc_desc"]);
+            
+            echo json_encode(["status" => "success", "message" => "Documento actualizado correctamente"]);
+
         break;
 
     }

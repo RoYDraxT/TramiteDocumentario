@@ -1,7 +1,7 @@
 <?php
     class Documento extends Conectar {
 
-        public function insert_partes($usu_id){
+        public function insert_documento($usu_id){
             $conectar=parent::conexion();
             parent::set_names();
             $sql="insert into documento values (null, ?, null,null,now(),null,null,2);";
@@ -12,10 +12,10 @@
             $sql1="select last_insert_id() as 'doc_id';";
             $sql1=$conectar->prepare($sql1);
             $sql1->execute();
-            return $resultado=$sql1->fetchall(pdo::FETCH_ASSOC);
+            return $sql1->fetchall(pdo::FETCH_ASSOC);
         }
 
-        public function update_partes($doc_id,$doc_asun,$doc_desc){
+        public function update_documento($doc_id,$doc_asun,$doc_desc){
             $conectar=parent::conexion();
             parent::set_names();
             $sql="update documento set

@@ -18,7 +18,7 @@ $(document).on("click","#btnguardar", function(){
 
     $.post("../../controller/documento.php?op=update",{doc_id:doc_id,doc_asun:doc_asun,doc_desc:doc_desc},function(data){
         Swal.fire(
-            'Mesa De Partes',
+            'Trámite Documentario',
             'Se registro Correctamente',
             'success'
         );
