@@ -82,4 +82,14 @@
             $sql->bindvalue(1, $docd_id);
             $sql->execute();
         }
+
+        public function list_doc($usu_id){
+            $conectar=parent::conexion();
+            parent::set_names();
+            $sql="select * from documento where usu_id=? and est=1;";
+            $sql=$conectar->prepare($sql);
+            $sql->bindvalue(1, $usu_id);
+            $sql->execute();
+            return $resultado=$sql->fetchall(pdo::FETCH_ASSOC);
+        }
     }

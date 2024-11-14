@@ -51,11 +51,33 @@ $(document).on("click","#btnguardar", function(){
         );
     }else{
         $.post("../../controller/documento.php?op=update",{doc_id:doc_id,doc_asun:doc_asun,doc_desc:doc_desc},function(data){
-            Swal.fire(
-                'Trámite Documentario',
-                'Se registro Correctamente',
-                'success'
-            );
+            let timerInterval;
+            Swal.fire({
+            title: 'Trámite Documentario',
+            html: 'Guardado Registro...Espere..<b></b>.',
+            timer: 2000,
+            timerProgressBar: true,
+            onBeforeOpen: () => {
+                Swal.showLoading();
+                timerInterval = setInterval(() => {
+                const content = Swal.getContent();
+                if (content) {
+                    const b = content.querySelector('b');
+                    if (b) {
+                    b.textContent = Swal.getTimerLeft();
+                    }
+                }
+                }, 100);
+
+            },
+            onClose: () => {
+                clearInterval(timerInterval);
+            }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    location.reload();
+                }
+            });
         });
     }
 });
@@ -107,8 +129,6 @@ function llenartabla(doc_id){
             }
         },
     });
-
-
 }
 
 function eliminar(docd_id){

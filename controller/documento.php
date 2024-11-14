@@ -47,5 +47,44 @@
             echo json_encode($results);
         break;
 
+        case "listardetalle_consulta":
+            $datos=$documento->list_docdetalle($_POST["doc_id"]);
+            $data= Array();
+            foreach($datos as $row){
+                $sub_array = array();
+                $sub_array[] = $row["docd_obs"];
+                $sub_array[] = '<a href="../../public/src/'.$row["docd_file"].'" target="_blank">'.$row["docd_file"].'</a>';
+                $data[] = $sub_array;
+            }
+        
+            $results = array(
+                "sEcho"=>1,
+                "iTotalRecords"=>count($data),
+                "iTotalDisplayRecords"=>count($data),
+                "aaData"=>$data);
+            echo json_encode($results);
+        break;
+
+        case "listar":
+            $datos=$documento->list_doc($_POST["usu_id"]);
+            $data= Array();
+            foreach($datos as $row){
+                $sub_array = array();
+                $sub_array[] = "DOC-".$row["doc_id"];
+                $sub_array[] = date("d-m-Y", strtotime($row["fech_crea"]));
+                $sub_array[] = $row["doc_asun"];
+                $sub_array[] = $row["doc_desc"];
+                $sub_array[] = '<button type="button" onClick="ver('.$row["doc_id"].');"  id="'.$row["doc_id"].'" class="btn btn-outline-info btn-icon"><div><i class="fa fa-database"></i></div></button>';
+                $data[] = $sub_array;
+            }
+        
+            $results = array(
+                "sEcho"=>1,
+                "iTotalRecords"=>count($data),
+                "iTotalDisplayRecords"=>count($data),
+                "aaData"=>$data);
+            echo json_encode($results);
+        break;
+
     }
 
