@@ -33,24 +33,27 @@
     <body>
         <div id="page-container" class="main-content-boxed">
             <main id="main-container">
-                <div class="bg-image" style="background-image: url('public/assets/img/photos/photo34@2x.jpg');">
+                <div class="bg-image" style="background-image: url('public/assets/img/photos/unalm.jpg');">
                     <div class="row mx-0 bg-black-op">
                         <div class="hero-static col-md-6 col-xl-8 d-none d-md-flex align-items-md-end">
                             <div class="p-30 invisible" data-toggle="appear">
                                 <p class="font-size-h3 font-w600 text-white">
-                                    UNALM
+                                    Universidad Nacional Agraria la Molina
                                 </p>
                                 <p class="font-italic text-white-op">
-                                    Copyright &copy; <span class="js-year-copy">2024</span>
+                                    Sistema de Gestión de Base de Datos <span class="js-year-copy">- II</span>
                                 </p>
                             </div>
                         </div>
                         <div class="hero-static col-md-6 col-xl-4 d-flex align-items-center bg-white invisible" data-toggle="appear" data-class="animated fadeInRight">
                             <div class="content content-full">
                                 <!-- Header -->
-                                <div class="px-30 py-10">
-                                    <h1 class="h3 font-w700 mt-30 mb-10">Trámite Documentario</h1>
-                                    <h2 class="h5 font-w400 text-muted mb-0">Inicio de Sesion</h2>
+                                <div style="display: flex; align-items: center;">
+                                    <img src="public/assets/img/favicons/icon-unalm.jpg" alt="icon-unalm" style="width: 50px; height: auto; margin-right: 10px; margin-top: 35px;">
+                                    <div>
+                                        <h1 class="h3 font-w700 mt-30 mb-10">Trámite Documentario</h1>
+                                        <h2 class="h5 font-w400 text-muted mb-0">Inicio de Sesion</h2>
+                                    </div>
                                 </div>
 
                                 <?php
@@ -115,16 +118,16 @@
                                     </div>
                                     <div class="form-group">
                                         <input type="hidden" name="enviar" class="form-control" value="si">
-                                        <button type="submit" class="btn btn-sm btn-hero btn-alt-primary">
+                                        <button type="submit" class="btn btn-sm btn-hero btn-alt-Success">
                                             <i class="si si-login mr-10"></i> Iniciar Sesión 
                                         </button>
                                         <div class="mt-30">
                                             <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="Registrarse/">
                                                 <i class="fa fa-plus mr-5"></i> Crear Cuenta
                                             </a>
-                                            <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="RecuperarContrasena/">
+                                            <!-- <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="RecuperarContrasena/">
                                                 <i class="fa fa-warning mr-5"></i> Olvidé mi Contraseña
-                                            </a>
+                                            </a> -->
                                         </div>
                                     </div>
                                 </form>

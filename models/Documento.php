@@ -15,6 +15,8 @@
             return $resultado=$sql1->fetchall(pdo::FETCH_ASSOC);
         }
 
+        
+
         public function update_documento($doc_id,$doc_asun,$doc_desc){
             $conectar=parent::conexion();
             parent::set_names();

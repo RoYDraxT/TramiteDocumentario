@@ -12,7 +12,7 @@ $(document).on("click","#btnrecuperar", function(){
 
     if(usu_correo ==""){
         Swal.fire(
-            'Mesa De Partes',
+            'Trámite Documentario',
             'Error campo vacio',
             'error'
         );
@@ -20,7 +20,7 @@ $(document).on("click","#btnrecuperar", function(){
         $.post("../controller/usuario.php?op=correo", { usu_correo : usu_correo}, function(data){
             if (data=='[]'){
                 Swal.fire(
-                    'Mesa De Partes',
+                    'Trámite Documentario',
                     'Usuario no Registrado',
                     'error'
                 );
@@ -30,7 +30,7 @@ $(document).on("click","#btnrecuperar", function(){
                 });
 
                 Swal.fire(
-                    'Mesa De Partes',
+                    'Trámite Documentario',
                     'Se envio correo',
                     'success'
                 );

@@ -13,8 +13,8 @@
                 <?php echo $_SESSION["usu_nom"] ." ". $_SESSION["usu_ape"]?><i class="fa fa-angle-down ml-5"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right min-width-150" aria-labelledby="page-header-user-dropdown">
-                    <a class="dropdown-item" href="be_pages_generic_profile.html">
-                        <i class="si si-user mr-5"></i> Perfil
+                    <a class="dropdown-item" href="View/ConsultarStatus/">
+                        <i class="si si-user mr-5"></i> Consultar Status
                     </a>
                     <div class="dropdown-divider"></div>
 
