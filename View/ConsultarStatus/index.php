@@ -3,6 +3,7 @@
   if(isset($_SESSION["usu_id"])){ 
 ?>
 
+<!DOCTYPE html>
 <html lang="en" class="no-focus">
     <head>
         <?php require_once("../MainHead/MainHead.php");?> 
@@ -11,49 +12,20 @@
 
     </head>
     <body>
-        <div id="page-container" class="sidebar-o side-scroll page-header-modern main-content-boxed sidebar-inverse">
-            <aside id="side-overlay">
-                <div id="side-overlay-scroll">
-                    <div class="content-header content-header-fullrow">
-                        <div class="content-header-section align-parent">
-                            <button type="button" class="btn btn-circle btn-dual-secondary align-v-r" data-toggle="layout" data-action="side_overlay_close">
-                                <i class="fa fa-times text-danger"></i>
-                            </button>
-
-                            <div class="content-header-item">
-                                <a class="img-link mr-5" href="be_pages_generic_profile.html">
-                                    <img class="img-avatar img-avatar32" src="../../public/assets/img/avatars/avatar15.jpg" alt="">
-                                </a>
-                                <a class="align-middle link-effect text-primary-dark font-w600" href="be_pages_generic_profile.html">John Smith</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </aside>
-
-            <nav id="sidebar">
-                <div id="sidebar-scroll">
-                    <div class="sidebar-content">
-                        <?php require_once("../MainSidebar/MainSidebar.php");?> 
-
-                        <?php require_once("../MainMenu/MainMenu.php");?> 
-                    </div>
-
-                </div>
-
-            </nav>
-
-
+        <div id="page-container" class="main-content-boxed">
+            <!-- Ajustar ubicación del botón en el header -->
             <?php require_once("../MainHeader/MainHeader.php");?> 
             
             <!-- Contenido -->
             <main id="main-container">
                 <div class="content">
-                    
                     <div class="block">
-                        <div class="block-header block-header-default">
+                        <div class="block-header block-header-default" style="display: flex; justify-content: space-between; align-items: center;">
                             <h3 class="block-title">Listado de Registros</h3>
+                            <!-- Botón para redirigir a Nuevo Registro alineado a la derecha -->
+                            <button type="button" class="btn btn-circle btn-dual-secondary" id="btn-registro">
+                                <i class="fa fa-angle-left"></i> Regresar
+                            </button>
                         </div>
                         <div class="block-content block-content-full">
                             <table id="doc_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
@@ -67,14 +39,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    <!-- Aquí va el contenido de la tabla -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </main>
-            <!-- Contenido -->
 
             <div id="modaldetalle" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -94,7 +65,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                  
+                                    <!-- Aquí va el contenido de la tabla de detalles -->
                                 </tbody>
                             </table>
                         </div>
@@ -105,13 +76,18 @@
                 </div>
             </div>
 
-        <?php require_once("../MainFooter/MainFooter.php");?> 
-
+            <?php require_once("../MainFooter/MainFooter.php");?> 
         </div>
 
         <?php require_once("../MainJs/MainJs.php");?> 
         <script type="text/javascript" src="consultarstatus.js"></script>
 
+        <!-- Script de redirección -->
+        <script>
+            document.getElementById('btn-registro').addEventListener('click', function() {
+                window.location.href = "../NuevoRegistro/";
+            });
+        </script>
     </body>
 </html>
 

@@ -110,7 +110,7 @@
                                     <div class="form-group row">
                                         <div class="col-12">
                                             <label class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="login-remember-me" name="login-remember-me">
+                                                <input type="checkbox" class="custom-control-input" id="remember" name="remember">
                                                 <span class="custom-control-indicator"></span>
                                                 <span class="custom-control-description">Recuerdame</span>
                                             </label>
@@ -150,5 +150,6 @@
         <script src="public/assets/js/codebase.js"></script>
         <script src="public/assets/js/plugins/jquery-validation/jquery.validate.min.js"></script>
         <script src="public/assets/js/pages/op_auth_signin.js"></script>
+        <script src="recuerdame.js"></script>
     </body>
 </html>

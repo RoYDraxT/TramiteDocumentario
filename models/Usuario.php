@@ -26,8 +26,7 @@
                         $_SESSION["usu_nom"] = $resultado["usu_nom"];
                         $_SESSION["usu_ape"] = $resultado["usu_ape"];
 						$_SESSION["usu_correo"] = $resultado["usu_correo"];
-						header("Location:".Conectar::ruta()."view/Home/");
-						exit(); 
+						header("Location:".Conectar::ruta()."View/NuevoRegistro/"); exit();
 					} else {
 						header("Location:".Conectar::ruta()."index.php?m=1");
 						exit();

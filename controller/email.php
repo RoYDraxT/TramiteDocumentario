@@ -1,5 +1,5 @@
 <?php
-    require_once("../config/conexion.php");
+/*     require_once("../config/conexion.php");
     require_once("../models/Email.php");
     
     $email = new Email();
@@ -18,4 +18,4 @@
             $email->solicitud($_POST["doc_id"],$_POST["usu_nom"],$_POST["usu_ape"]);
         break;
  
-    }
+    } */

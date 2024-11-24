@@ -38,6 +38,8 @@ function guardaryeditar(e){
     });        
 }
 
+
+
 $(document).on("click","#btnguardar", function(){
     var doc_id = $("#doc_id").val();
     var doc_asun = $("#doc_asun").val();

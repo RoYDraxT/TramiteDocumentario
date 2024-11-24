@@ -1,5 +1,5 @@
 <?php
-    require('class.phpmailer.php');
+/*     require('class.phpmailer.php');
     include("class.smtp.php");
 
     require_once("../config/conexion.php");
@@ -108,3 +108,4 @@
         }
 
     }
+ */
