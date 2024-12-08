@@ -18,6 +18,6 @@ class Conectar {
 		}
 
 		public function ruta(){
-			return "http://localhost:80/MesaDePartes/";
+			return "http://localhost:80/TramiteDocumentario/";
 		}
 	}
