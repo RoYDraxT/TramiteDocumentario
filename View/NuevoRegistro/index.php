@@ -35,18 +35,18 @@
                                         <textarea class="form-control" id="doc_desc" name="doc_desc" rows="6"></textarea>
                                     </div>
                                 </div>
-                              <!--   <div class="form-group row">
-                                    <label class="col-12" for="dep_nom,">Departamento</label>
+                                <div class="form-group row">
+                                    <label class="col-12" for="dep_id">Departamento</label>
                                     <div class="col-md-9">
-                                        <select class="form-control" id="dep_nom" name="dep_nom">
-                                            <option value="Departamentos Académico">Departamentos Académico</option>
-                                            <option value="Alta Dirección">Alta Dirección</option>
-                                            <option value="Facultades">Facultades</option>
-                                            <option value="Órganos de Gobierno">Órganos de Gobierno</option>
-                                            <option value="Escuela de Post Grado">Escuela de Post Grado</option>
+                                        <select class="form-control" id="dep_id" name="dep_id">
+                                            <option value="1463">Departamentos Académico</option>
+                                            <option value="8479">Alta Dirección</option>
+                                            <option value="5495">Facultades</option>
+                                            <option value="5189">Órganos de Gobierno</option>
+                                            <option value="6447">Escuela de Post Grado</option>
                                         </select>
                                     </div>
-                                </div> -->
+                                </div>
                                 <div class="block-content block-content-sm block-content-full bg-body-light">
                                     <div class="row">
                                         <div class="col-6">

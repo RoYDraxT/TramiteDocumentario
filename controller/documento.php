@@ -6,19 +6,18 @@
     switch($_GET["op"]){
 
         case "insert":
-            $datos = $documento->insert_documento($_POST["usu_id"]);
+            $datos = $documento->insert_documento($_POST["usu_id"], $_POST["dep_id"]);
             if(is_array($datos)==true and count($datos)>0){
-                foreach($datos as $row)
-                {
+                foreach($datos as $row){
                     $output["doc_id"] = $row["doc_id"];
                 }
                 echo json_encode($output);
             }
         break;
-
+        
         case "update":
-            $documento->update_documento($_POST["doc_id"],$_POST["doc_asun"],$_POST["doc_desc"]);
-        break;
+            $documento->update_documento($_POST["doc_id"], $_POST["doc_asun"], $_POST["doc_desc"], $_POST["dep_id"]);
+        break;        
         
         case "insertdetalle":
             $documento->insert_docdetalle($_POST["doc_id"],$_POST["docd_obs"],$_POST["docd_file"]);

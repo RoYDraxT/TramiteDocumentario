@@ -13,12 +13,6 @@
                 <?php echo ucfirst($_SESSION["usu_nom"]) ." ". ucfirst($_SESSION["usu_ape"])?><i class="fa fa-angle-down ml-5"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right min-width-150" aria-labelledby="page-header-user-dropdown">
-                    <a class="dropdown-item" href="../ConsultarStatus">
-                        <i class="fa fa-search mr-5"></i> Consultar Status
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-
                     <a class="dropdown-item" href="../Logout/logout.php">
                         <i class="si si-logout mr-5"></i> Cerrar Sesion
                     </a>

@@ -7,7 +7,8 @@ function init(){
 }
 
 $(document).ready(function(){
-    $.post("../../controller/documento.php?op=insert",{usu_id:usu_id},function(data){
+    var dep_id = $("#dep_id").val();
+    $.post("../../controller/documento.php?op=insert",{usu_id:usu_id, dep_id:dep_id},function(data){
         data = JSON.parse(data);
         $('#doc_id').val(data.doc_id);
 
@@ -44,37 +45,38 @@ $(document).on("click","#btnguardar", function(){
     var doc_id = $("#doc_id").val();
     var doc_asun = $("#doc_asun").val();
     var doc_desc = $("#doc_desc").val();
+    var dep_id = $("#dep_id").val(); // Obtener el departamento seleccionado
 
-    if(doc_asun=='' || doc_desc==''){
+    if(doc_asun=='' || doc_desc=='' || dep_id==''){
         Swal.fire(
             'Mesa De Partes',
-            'Campos Vacios',
+            'Campos Vacíos',
             'error'
         );
     }else{
-        $.post("../../controller/documento.php?op=update",{doc_id:doc_id,doc_asun:doc_asun,doc_desc:doc_desc},function(data){
+        $.post("../../controller/documento.php?op=update", {doc_id:doc_id, doc_asun:doc_asun, doc_desc:doc_desc, dep_id:dep_id}, function(data){
             let timerInterval;
             Swal.fire({
-            title: 'Trámite Documentario',
-            html: 'Guardado Registro...Espere..<b></b>.',
-            timer: 2000,
-            timerProgressBar: true,
-            onBeforeOpen: () => {
-                Swal.showLoading();
-                timerInterval = setInterval(() => {
-                const content = Swal.getContent();
-                if (content) {
-                    const b = content.querySelector('b');
-                    if (b) {
-                    b.textContent = Swal.getTimerLeft();
-                    }
-                }
-                }, 100);
+                title: 'Trámite Documentario',
+                html: 'Guardado Registro...Espere..<b></b>.',
+                timer: 2000,
+                timerProgressBar: true,
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                    timerInterval = setInterval(() => {
+                        const content = Swal.getContent();
+                        if (content) {
+                            const b = content.querySelector('b');
+                            if (b) {
+                                b.textContent = Swal.getTimerLeft();
+                            }
+                        }
+                    }, 100);
 
-            },
-            onClose: () => {
-                clearInterval(timerInterval);
-            }
+                },
+                onClose: () => {
+                    clearInterval(timerInterval);
+                }
             }).then((result) => {
                 if (result.dismiss === Swal.DismissReason.timer) {
                     location.reload();
