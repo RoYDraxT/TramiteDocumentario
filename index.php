@@ -125,9 +125,9 @@
                                             <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="Registrarse/">
                                                 <i class="fa fa-plus mr-5"></i> Crear Cuenta
                                             </a>
-                                            <!-- <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="RecuperarContrasena/">
-                                                <i class="fa fa-warning mr-5"></i> Olvidé mi Contraseña
-                                            </a> -->
+                                            <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="IniciarAdministrador/">
+                                                <i class="fa fa-warning mr-5"></i> Iniciar Como Administrador
+                                            </a>
                                         </div>
                                     </div>
                                 </form>

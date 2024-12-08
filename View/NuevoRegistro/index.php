@@ -8,40 +8,9 @@
         <?php require_once("../MainHead/MainHead.php");?> 
         
         <title>Nuevo Registro | Trámite Documentario</title>
-
     </head>
     <body>
         <div id="page-container" class="main-content-boxed"> <!-- Barra superior -->
-            <!-- <aside id="side-overlay">
-                <div id="side-overlay-scroll">
-                    <div class="content-header content-header-fullrow">
-                        <div class="content-header-section align-parent">
-                            <button type="button" class="btn btn-circle btn-dual-secondary align-v-r" data-toggle="layout" data-action="side_overlay_close">
-                                <i class="fa fa-times text-danger"></i>
-                            </button>
-
-                            <div class="content-header-item">
-                                <a class="img-link mr-5" href="be_pages_generic_profile.html">
-                                    <img class="img-avatar img-avatar32" src="../../public/assets/img/avatars/avatar15.jpg" alt="">
-                                </a>
-                                <a class="align-middle link-effect text-primary-dark font-w600" href="be_pages_generic_profile.html">John Smith</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside> -->
-
-            <!-- <nav id="sidebar">
-                <div id="sidebar-scroll">
-                    <div class="sidebar-content">
-                        <?#php require_once("../MainSidebar/MainSidebar.php");?> 
-
-                        <?#php require_once("../MainMenu/MainMenu.php");?> 
-                    </div>
-
-                </div>
-            </nav> -->
-
             <?php require_once("../MainHeader/MainHeader.php");?> 
             
             <!-- Contenido -->
@@ -66,6 +35,18 @@
                                         <textarea class="form-control" id="doc_desc" name="doc_desc" rows="6"></textarea>
                                     </div>
                                 </div>
+                              <!--   <div class="form-group row">
+                                    <label class="col-12" for="dep_nom,">Departamento</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" id="dep_nom" name="dep_nom">
+                                            <option value="Departamentos Académico">Departamentos Académico</option>
+                                            <option value="Alta Dirección">Alta Dirección</option>
+                                            <option value="Facultades">Facultades</option>
+                                            <option value="Órganos de Gobierno">Órganos de Gobierno</option>
+                                            <option value="Escuela de Post Grado">Escuela de Post Grado</option>
+                                        </select>
+                                    </div>
+                                </div> -->
                                 <div class="block-content block-content-sm block-content-full bg-body-light">
                                     <div class="row">
                                         <div class="col-6">
@@ -74,8 +55,8 @@
                                             </button>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <button type="button" class="btn btn-alt-primary" id="btnguardar">
-                                                Guardar <i class="fa fa-save ml-5"></i>
+                                            <button type="button" class="btn btn-alt-primary" id="btnguardar" onclick="location.href='../Home/index.php'">
+                                                Enviar <i class="fa fa-save ml-5"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -93,7 +74,7 @@
                                         <tr>
                                             <th class="text-center">Observación</th>
                                             <th>Archivo</th>
-                                            <th class="text-center" style="width: 15%;">Accion</th>
+                                            <th class="text-center" style="width: 15%;">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody>
