@@ -22,13 +22,9 @@
                     <div class="block">
                         <div class="block-header block-header-default" style="display: flex; justify-content: space-between; align-items: center;">
                             <h3 class="block-title">Listado de Registros</h3>
-                            <!-- Botón para redirigir a Nuevo Registro alineado a la derecha -->
-                            <button type="button" class="btn btn-circle btn-dual-secondary" id="btn-registro">
-                                <i class="fa fa-angle-left"></i> Regresar
-                            </button>
                         </div>
                         <div class="block-content block-content-full">
-                            <table id="doc_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                            <table id="doc_data" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="margin: 0 auto;">
                                 <thead>
                                     <tr>
                                         <th style="width: 10%;">Ticket</th>
@@ -36,6 +32,7 @@
                                         <th class="d-none d-sm-table-cell" style="width: 20%;">Asunto</th>
                                         <th class="d-none d-sm-table-cell" style="width: 65%;">Descripción</th>
                                         <th class="text-center" style="width: 15%;"></th>
+                                        <th class="text-center" style="width: 10%;">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,12 +79,6 @@
         <?php require_once("../MainJs/MainJs.php");?> 
         <script type="text/javascript" src="consultarstatus.js"></script>
 
-        <!-- Script de redirección -->
-        <script>
-            document.getElementById('btn-registro').addEventListener('click', function() {
-                window.location.href = "../NuevoRegistro/";
-            });
-        </script>
     </body>
 </html>
 

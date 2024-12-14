@@ -71,10 +71,10 @@ if (($_SESSION["dep_id"])) {
                                         <th style="width: 5%;">Ticket</th>
                                         <th style="width: 15%;">Nombre del Usuario</th>
                                         <th style="width: 10%;">DNI</th>
-                                        <th style="width: 10%;">Fecha de Envío</th>
+                                        <th style="width: 15%;">Fecha de Envío</th>
                                         <th style="width: 15%;">Asunto</th>
                                         <th style="width: 25%;">Descripción</th>
-                                        <th style="width: 10%;">Acciones</th>
+                                        <th style="width: 5%;">Acciones</th>
                                         <th style="width: 10%;">Tramitar</th>
                                     </tr>
                                 </thead>
@@ -88,7 +88,9 @@ if (($_SESSION["dep_id"])) {
                                             <td><?php echo $row['doc_asun']; ?></td>
                                             <td><?php echo $row['doc_desc']; ?></td>
                                             <td class="text-center">
-                                                <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#modaldetalle" data-id="<?php echo $row['doc_id']; ?>">Ver Detalle</button>
+                                                <button class="btn btn-outline-info btn-icon" data-toggle="modal" data-target="#modaldetalle" data-id="<?php echo $row['doc_id']; ?>">
+                                                    <i class="fa fa-database"></i>
+                                                </button>
                                             </td>
                                             <td class="text-center">
                                                 <button class="btn btn-secondary btn-tramitar btn-sm" data-toggle="modal" data-target="#modaltramitar" data-id="<?php echo $row['doc_id']; ?>">
@@ -179,9 +181,11 @@ if (($_SESSION["dep_id"])) {
                                             <label for="departamento">Seleccionar departamento:</label>
                                             <select class="form-control" id="departamento">
                                                 <option value="" selected disabled>Seleccione un departamento</option>
-                                                <option value="Departamento A">Departamento A</option>
-                                                <option value="Departamento B">Departamento B</option>
-                                                <option value="Departamento C">Departamento C</option>
+                                                <option value="1463">Departamento Académico</option>
+                                                <option value="5189">Órganos de Gobierno</option>
+                                                <option value="5495">Facultades</option>
+                                                <option value="6447">Escuela de Post Grado</option>
+                                                <option value="8479">Alta Dirección</option>
                                             </select>
                                         </div>
                                         <button type="button" id="btn-enviar-derivar" class="btn btn-primary">Derivar</button>
@@ -248,20 +252,12 @@ if (($_SESSION["dep_id"])) {
             });
 
             $(document).on('click', '.btn-tramitar', function () {
-                var button = $(this);
+                var docId = $(this).data('id'); // Obtener el ID del documento
 
-                // Cambiar el color del botón a amarillo después de hacer clic
-                if (!button.hasClass('btn-warning')) {
-                    button.removeClass('btn-secondary').addClass('btn-warning');
-                }
-
-                // Cargar información dinámica (si es necesario)
-                var docId = button.data('id');
-                console.log("Documento seleccionado para tramitar:", docId);
-
-                // Aquí puedes añadir lógica para cargar datos específicos del documento
-                // en el modal si es necesario
+                // Asociar el ID al modal
+                $('#modaltramitar').data('id', docId);
             });
+
             
             $(document).on('click', '#btn-enviar-respuesta', function () {
                 var respuesta = $('#respuesta').val();
@@ -287,25 +283,42 @@ if (($_SESSION["dep_id"])) {
             });
             
             $(document).on('click', '#btn-enviar-derivar', function () {
-                var departamento = $('#departamento').val();
+                var departamento = $('#departamento').val(); // ID del departamento seleccionado
+                var docId = $('#modaltramitar').data('id'); // ID del documento asociado al modal
 
                 if (!departamento) {
                     alert('Por favor, selecciona un departamento antes de derivar.');
                     return;
                 }
 
-                // Cambiar el botón "Tramitar" a color verde
-                var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
-                tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-success').text('Tramitado');
+                // Llamada AJAX para actualizar la base de datos
+                $.ajax({
+                    url: '../../controller/documento.php?op=derivar',
+                    type: 'POST',
+                    data: { 
+                        doc_id: docId, 
+                        dep_id: departamento 
+                    },
+                    success: function (response) {
+                        var data = JSON.parse(response);
+                        
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            // Remover la fila del documento derivado
+                            $('button[data-id="' + docId + '"]').closest('tr').remove();
 
-                // Mostrar el mensaje al hacer clic nuevamente en "Tramitar"
-                tramitarButton.off('click').on('click', function () {
-                    alert('El registro fue derivado al departamento: ' + departamento);
+                            // Opcional: Actualizar un contador o enviar la fila al nuevo departamento (si aplicable)
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error al derivar el documento.');
+                    }
                 });
-
-                // Opcional: Cerrar el modal después de derivar
-                $('#modaltramitar').modal('hide');
             });
+
+
             
             $(document).on('click', '#btn-enviar-anular', function () {
                 var mensaje = $('#mensaje-anular').val();

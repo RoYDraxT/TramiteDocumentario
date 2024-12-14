@@ -28,23 +28,25 @@
         break;
 
         case "listardetalle":
-            $datos=$documento->list_docdetalle($_POST["doc_id"]);
-            $data= Array();
+            $datos = $documento->list_docdetalle($_POST["doc_id"]);
+            $data = array();
             foreach($datos as $row){
                 $sub_array = array();
                 $sub_array[] = $row["docd_obs"];
                 $sub_array[] = '<a href="../../public/src/'.$row["docd_file"].'" target="_blank">'.$row["docd_file"].'</a>';
-                $sub_array[] = '<button type="button" onClick="eliminar('.$row["docd_id"].');"  id="'.$row["docd_id"].'" class="btn btn-outline-danger btn-icon"><div><i class="fa fa-trash"></i></div></button>';
+                $sub_array[] = $row["seguimiento"] == 0 ? 'Pendiente' : 'Completado';
+                $sub_array[] = '<button type="button" onClick="eliminar('.$row["docd_id"].');" id="'.$row["docd_id"].'" class="btn btn-outline-danger btn-icon"><div><i class="fa fa-trash"></i></div></button>';
                 $data[] = $sub_array;
             }
         
             $results = array(
-                "sEcho"=>1,
-                "iTotalRecords"=>count($data),
-                "iTotalDisplayRecords"=>count($data),
-                "aaData"=>$data);
+                "sEcho" => 1,
+                "iTotalRecords" => count($data),
+                "iTotalDisplayRecords" => count($data),
+                "aaData" => $data
+            );
             echo json_encode($results);
-        break;
+        break;        
 
         case "listardetalle_consulta":
             $datos = $documento->list_docdetalle($_POST["doc_id"]);
@@ -78,6 +80,7 @@
                 $sub_array[] = $row["doc_asun"];
                 $sub_array[] = $row["doc_desc"];
                 $sub_array[] = '<button type="button" onClick="ver('.$row["doc_id"].');"  id="'.$row["doc_id"].'" class="btn btn-outline-info btn-icon"><div><i class="fa fa-database"></i></div></button>';
+                $sub_array[] = '<button type="button" class="btn btn-secondary" onClick="consultar('.$row["doc_id"].');">Consultar</button>'; // Botón gris
                 $data[] = $sub_array;
             }
         
@@ -88,6 +91,27 @@
                 "aaData"=>$data);
             echo json_encode($results);
         break;
-
+        
+        case 'derivar':
+            $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
+            $dep_id = isset($_POST['dep_id']) ? intval($_POST['dep_id']) : 0;
+        
+            if ($doc_id > 0 && $dep_id > 0) {
+                try {
+                    $sql = "UPDATE documento SET dep_id = ? WHERE doc_id = ?";
+                    $stmt = $conexion->prepare($sql);
+                    $stmt->execute([$dep_id, $doc_id]);
+        
+                    echo json_encode(['status' => 'success', 'message' => 'Documento derivado correctamente']);
+                } catch (Exception $e) {
+                    logError("Error al derivar el documento: " . $e->getMessage());
+                    echo json_encode(['status' => 'error', 'message' => 'No se pudo derivar el documento']);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Parámetros inválidos']);
+            }
+            break;
+        
+        
     }
 

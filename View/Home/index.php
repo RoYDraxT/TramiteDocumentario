@@ -10,7 +10,7 @@
         <title>Home | Trámite Documentario</title>
     </head>
     <body>
-        <div id="page-container" class="sidebar-o side-scroll page-header-modern main-content-boxed sidebar-inverse">
+        <div id="page-container" class="page-header-modern main-content-boxed">
             <?php require_once("../MainHeader/MainHeader.php");?> 
             
             <!-- Contenido -->
