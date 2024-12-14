@@ -12,30 +12,10 @@ $(document).on("click", "#btnadministrador", function () {
             const data = JSON.parse(response);
 
             if (data.status === "success") {
-                // Redirigir a la página correspondiente según el ID del departamento
-                switch (dep_id) {
-                    case '1463':
-                        window.location.href = "../View/Administrador/academico.php";
-                        break;
-                    case '8479':
-                        window.location.href = "../View/Administrador/altadireccion.php";
-                        break;
-                    case '5495':
-                        window.location.href = "../View/Administrador/facultades.php";
-                        break;
-                    case '5189':
-                        window.location.href = "../View/Administrador/orgagobierno.php";
-                        break;
-                    case '6447':
-                        window.location.href = "../View/Administrador/postgrado.php";
-                        break;
-                    default:
-                        Swal.fire(
-                            'Trámite Documentario',
-                            'Código no válido.',
-                            'error'
-                        );
-                }
+                // Guardar el dep_id en la sesión y redirigir a la página general del administrador
+                $.post("../controller/save_dep_id.php", { dep_id: dep_id }, function () {
+                    window.location.href = "../View/Administrador/index.php";
+                });
             } else {
                 Swal.fire(
                     'Trámite Documentario',

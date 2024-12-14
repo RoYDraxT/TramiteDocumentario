@@ -47,22 +47,26 @@
         break;
 
         case "listardetalle_consulta":
-            $datos=$documento->list_docdetalle($_POST["doc_id"]);
-            $data= Array();
-            foreach($datos as $row){
+            $datos = $documento->list_docdetalle($_POST["doc_id"]);
+            $data = array();
+        
+            foreach($datos as $row) {
                 $sub_array = array();
-                $sub_array[] = $row["docd_obs"];
-                $sub_array[] = '<a href="../../public/src/'.$row["docd_file"].'" target="_blank">'.$row["docd_file"].'</a>';
+                $sub_array[] = $row["docd_obs"]; // Observación
+                $sub_array[] = $row["docd_file"]; // Nombre del archivo
+        
                 $data[] = $sub_array;
             }
         
             $results = array(
-                "sEcho"=>1,
-                "iTotalRecords"=>count($data),
-                "iTotalDisplayRecords"=>count($data),
-                "aaData"=>$data);
+                "sEcho" => 1,
+                "iTotalRecords" => count($data),
+                "iTotalDisplayRecords" => count($data),
+                "aaData" => $data
+            );
+        
             echo json_encode($results);
-        break;
+        break;        
 
         case "listar":
             $datos=$documento->list_doc($_POST["usu_id"]);
@@ -86,3 +90,4 @@
         break;
 
     }
+
