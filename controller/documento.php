@@ -121,6 +121,41 @@
             }
         break;
 
+        case "tramitar":
+            $doc_id = isset($_POST["doc_id"]) ? intval($_POST["doc_id"]) : 0;
+            
+            if ($doc_id > 0) {
+                try {
+                    // Obtener la fecha y hora actual en formato compatible
+                    $fecha_actual = date("Y-m-d H:i:s");
+                    
+                    // Conectar a la base de datos
+                    $conectar = new Conectar();
+                    $conexion = $conectar->getConexion(); // Asegúrate de que esto esté correctamente definido
+        
+                    // Actualizar la base de datos solo si no se ha realizado el trámite antes
+                    $checkSql = "SELECT * FROM documento WHERE doc_id = ? AND (fech_visto IS NULL OR seguimiento = 0)";
+                    $checkStmt = $conexion->prepare($checkSql);
+                    $checkStmt->execute([$doc_id]);
+                    $documento = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        
+                    if ($documento) {
+                        // Si el trámite no se ha realizado, continuar con la actualización
+                        $sql = "UPDATE documento SET fech_visto = ?, seguimiento = 1 WHERE doc_id = ?";
+                        $stmt = $conexion->prepare($sql);
+                        $stmt->execute([$fecha_actual, $doc_id]);
+                        echo json_encode(["status" => "success", "message" => "El trámite ha sido registrado correctamente."]);
+                    } else {
+                        echo json_encode(["status" => "info", "message" => "El trámite ya ha sido registrado previamente."]);
+                    }
+                } catch (Exception $e) {
+                    logError("Error al tramitar el documento: " . $e->getMessage());
+                    echo json_encode(["status" => "error", "message" => "Ocurrió un error al registrar el trámite."]);
+                }
+            } else {
+                echo json_encode(["status" => "error", "message" => "ID de documento inválido."]);
+            }
+        break;
         
     }
 
