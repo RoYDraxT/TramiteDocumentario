@@ -92,26 +92,35 @@
             echo json_encode($results);
         break;
         
-        case 'derivar':
+        case "listar_departamento":
+            $dep_id_actual = isset($_POST["dep_id_actual"]) ? $_POST["dep_id_actual"] : null;
+            $datos = $documento->list_departamento($dep_id_actual); // Método en el modelo
+            $data = array();
+            foreach ($datos as $row) {
+                $sub_array = array();
+                $sub_array["dep_id"] = $row["dep_id"];
+                $sub_array["dep_nom"] = $row["dep_nom"];
+                $data[] = $sub_array;
+            }
+            echo json_encode($data);
+        break;
+            
+        case "derivar":
             $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
             $dep_id = isset($_POST['dep_id']) ? intval($_POST['dep_id']) : 0;
         
             if ($doc_id > 0 && $dep_id > 0) {
-                try {
-                    $sql = "UPDATE documento SET dep_id = ? WHERE doc_id = ?";
-                    $stmt = $conexion->prepare($sql);
-                    $stmt->execute([$dep_id, $doc_id]);
-        
-                    echo json_encode(['status' => 'success', 'message' => 'Documento derivado correctamente']);
-                } catch (Exception $e) {
-                    logError("Error al derivar el documento: " . $e->getMessage());
-                    echo json_encode(['status' => 'error', 'message' => 'No se pudo derivar el documento']);
+                $resultado = $documento->derivar_documento($doc_id, $dep_id);
+                if ($resultado) {
+                    echo json_encode(["status" => "success", "message" => "Documento derivado exitosamente."]);
+                } else {
+                    echo json_encode(["status" => "error", "message" => "No se pudo derivar el documento."]);
                 }
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Parámetros inválidos']);
+                echo json_encode(["status" => "error", "message" => "Parámetros inválidos."]);
             }
-            break;
-        
+        break;
+
         
     }
 

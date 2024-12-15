@@ -164,7 +164,6 @@ if (($_SESSION["dep_id"])) {
                                 <div class="tab-pane fade show active" id="responder" role="tabpanel" aria-labelledby="responder-tab">
                                     <form id="form-responder">
                                         <div class="form-group">
-                                            <label for="respuesta">Escribe tu respuesta:</label>
                                             <textarea class="form-control" id="respuesta" rows="4" placeholder="Escribe aquí tu respuesta"></textarea>
                                         </div>
                                         <div class="form-group">
@@ -178,14 +177,8 @@ if (($_SESSION["dep_id"])) {
                                 <div class="tab-pane fade" id="derivar" role="tabpanel" aria-labelledby="derivar-tab">
                                     <form id="form-derivar">
                                         <div class="form-group">
-                                            <label for="departamento">Seleccionar departamento:</label>
-                                            <select class="form-control" id="departamento">
-                                                <option value="" selected disabled>Seleccione un departamento</option>
-                                                <option value="1463">Departamento Académico</option>
-                                                <option value="5189">Órganos de Gobierno</option>
-                                                <option value="5495">Facultades</option>
-                                                <option value="6447">Escuela de Post Grado</option>
-                                                <option value="8479">Alta Dirección</option>
+                                            <select id="select-departamento" class="form-control">
+                                                <option value="">Seleccione un departamento</option>
                                             </select>
                                         </div>
                                         <button type="button" id="btn-enviar-derivar" class="btn btn-primary">Derivar</button>
@@ -195,7 +188,6 @@ if (($_SESSION["dep_id"])) {
                                 <div class="tab-pane fade" id="anular" role="tabpanel" aria-labelledby="anular-tab">
                                     <form id="form-anular">
                                         <div class="form-group">
-                                            <label for="mensaje-anular">Escribe el motivo de la anulación:</label>
                                             <textarea class="form-control" id="mensaje-anular" rows="4" placeholder="Motivo de la anulación"></textarea>
                                         </div>
                                         <button type="button" id="btn-enviar-anular" class="btn btn-danger">Anular</button>
@@ -216,132 +208,158 @@ if (($_SESSION["dep_id"])) {
 
         <?php require_once("../MainJs/MainJs.php");?> 
         <script type="text/javascript">
-            $(document).on('click', '[data-target="#modaldetalle"]', function() {
-                var docId = $(this).data('id'); // Obtener el ID del documento
+            $(document).ready(function() {
+                var dep_id_actual = '<?php echo $_SESSION['dep_id']; ?>';
 
-                // Limpiar el contenido anterior del modal
-                $('#detalle_data tbody').empty();
-
-                // Llamada AJAX para obtener los detalles del documento
+                // AJAX para listar departamentos excluyendo el actual
                 $.ajax({
-                    url: '../../controller/documento.php?op=listardetalle_consulta',
-                    type: 'POST',
-                    data: { doc_id: docId },
+                    url: "../../controller/documento.php?op=listar_departamento",
+                    type: "POST",
+                    data: { dep_id_actual: dep_id_actual },
                     success: function(response) {
-                        var data = JSON.parse(response); // Convertir la respuesta a JSON
-                        
-                        // Verificar si se recibieron datos
-                        if (data.aaData.length > 0) {
-                            $.each(data.aaData, function(index, detail) {
-                                // Agregar filas a la tabla
-                                $('#detalle_data tbody').append(
-                                    '<tr>' +
-                                    '<td>' + detail[0] + '</td>' + // Observación
-                                    '<td><a href="../../public/src/' + detail[1] + '" target="_blank">Ver Archivo</a></td>' + // Enlace al archivo
-                                    '</tr>'
-                                );
+                        try {
+                            let departamentos = JSON.parse(response); // Intentar parsear como JSON
+                            let select = $("#select-departamento"); // ID del select en tu HTML
+                            select.empty(); // Limpiar opciones anteriores
+                            departamentos.forEach(function(depto) {
+                                select.append(`<option value="${depto.dep_id}">${depto.dep_nom}</option>`);
                             });
-                        } else {
-                            $('#detalle_data tbody').append('<tr><td colspan="2">No se encontraron detalles para este documento.</td></tr>');
+                        } catch (error) {
+                            console.error("Error al parsear la respuesta JSON:", error);
+                            console.log("Respuesta del servidor:", response);
                         }
                     },
-                    error: function() {
-                        $('#detalle_data tbody').html('<tr><td colspan="2">Error al cargar los detalles.</td></tr>');
+                    error: function(error) {
+                        console.error("Error al listar departamentos:", error);
                     }
                 });
-            });
 
-            $(document).on('click', '.btn-tramitar', function () {
-                var docId = $(this).data('id'); // Obtener el ID del documento
+                $(document).on('click', '[data-target="#modaldetalle"]', function() {
+                    var docId = $(this).data('id'); // Obtener el ID del documento
 
-                // Asociar el ID al modal
-                $('#modaltramitar').data('id', docId);
-            });
+                    // Limpiar el contenido anterior del modal
+                    $('#detalle_data tbody').empty();
 
-            
-            $(document).on('click', '#btn-enviar-respuesta', function () {
-                var respuesta = $('#respuesta').val();
-                var archivo = $('#archivo-respuesta').val(); // Nombre del archivo adjunto
+                    // Llamada AJAX para obtener los detalles del documento
+                    $.ajax({
+                        url: '../../controller/documento.php?op=listardetalle_consulta',
+                        type: 'POST',
+                        data: { doc_id: docId },
+                        success: function(response) {
+                            var data = JSON.parse(response); // Convertir la respuesta a JSON
 
-                // Validación básica
-                if (respuesta.trim() === '') {
-                    alert('Por favor, escribe una respuesta antes de enviar.');
-                    return;
-                }
-
-                // Cambiar el botón "Tramitar" a color verde
-                var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
-                tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-success').text('Tramitado');
-
-                // Mostrar la información en el modal al hacer clic nuevamente en "Tramitar"
-                tramitarButton.off('click').on('click', function () {
-                    alert('Respuesta: ' + respuesta + '\nArchivo adjunto: ' + (archivo || 'Ninguno'));
-                });
-
-                // Opcional: Cerrar el modal después de enviar
-                $('#modaltramitar').modal('hide');
-            });
-            
-            $(document).on('click', '#btn-enviar-derivar', function () {
-                var departamento = $('#departamento').val(); // ID del departamento seleccionado
-                var docId = $('#modaltramitar').data('id'); // ID del documento asociado al modal
-
-                if (!departamento) {
-                    alert('Por favor, selecciona un departamento antes de derivar.');
-                    return;
-                }
-
-                // Llamada AJAX para actualizar la base de datos
-                $.ajax({
-                    url: '../../controller/documento.php?op=derivar',
-                    type: 'POST',
-                    data: { 
-                        doc_id: docId, 
-                        dep_id: departamento 
-                    },
-                    success: function (response) {
-                        var data = JSON.parse(response);
-                        
-                        if (data.status === 'success') {
-                            alert(data.message);
-                            // Remover la fila del documento derivado
-                            $('button[data-id="' + docId + '"]').closest('tr').remove();
-
-                            // Opcional: Actualizar un contador o enviar la fila al nuevo departamento (si aplicable)
-                        } else {
-                            alert('Error: ' + data.message);
+                            // Verificar si se recibieron datos
+                            if (data.aaData.length > 0) {
+                                $.each(data.aaData, function(index, detail) {
+                                    // Agregar filas a la tabla
+                                    $('#detalle_data tbody').append(
+                                        '<tr>' +
+                                        '<td>' + detail[0] + '</td>' + // Observación
+                                        '<td><a href="../../public/src/' + detail[1] + '" target="_blank">Ver Archivo</a></td>' + // Enlace al archivo
+                                        '</tr>'
+                                    );
+                                });
+                            } else {
+                                $('#detalle_data tbody').append('<tr><td colspan="2">No se encontraron detalles para este documento.</td></tr>');
+                            }
+                        },
+                        error: function() {
+                            $('#detalle_data tbody').html('<tr><td colspan="2">Error al cargar los detalles.</td></tr>');
                         }
-                    },
-                    error: function () {
-                        alert('Error al derivar el documento.');
+                    });
+                });
+
+                $(document).on('click', '.btn-tramitar', function () {
+                    var docId = $(this).data('id'); // Obtener el ID del documento
+
+                    // Asociar el ID al modal
+                    $('#modaltramitar').data('id', docId);
+                });
+
+                $(document).on('click', '#btn-enviar-respuesta', function () {
+                    var respuesta = $('#respuesta').val();
+                    var archivo = $('#archivo-respuesta').val(); // Nombre del archivo adjunto
+
+                    // Validación básica
+                    if (respuesta.trim() === '') {
+                        alert('Por favor, escribe una respuesta antes de enviar.');
+                        return;
                     }
-                });
-            });
 
+                    // Cambiar el botón "Tramitar" a color verde
+                    var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
+                    tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-success').text('Tramitado');
 
-            
-            $(document).on('click', '#btn-enviar-anular', function () {
-                var mensaje = $('#mensaje-anular').val();
+                    // Mostrar la información en el modal al hacer clic nuevamente en "Tramitar"
+                    tramitarButton.off('click').on('click', function () {
+                        alert('Respuesta: ' + respuesta + '\nArchivo adjunto: ' + (archivo || 'Ninguno'));
+                    });
 
-                if (mensaje.trim() === '') {
-                    alert('Por favor, escribe un motivo antes de anular.');
-                    return;
-                }
-
-                // Cambiar el botón "Tramitar" a color rojo
-                var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
-                tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-danger').text('Anulado');
-
-                // Mostrar el mensaje al hacer clic nuevamente en "Tramitar"
-                tramitarButton.off('click').on('click', function () {
-                    alert('El registro fue anulado. Motivo: ' + mensaje);
+                    // Opcional: Cerrar el modal después de enviar
+                    $('#modaltramitar').modal('hide');
                 });
 
-                // Opcional: Cerrar el modal después de anular
-                $('#modaltramitar').modal('hide');
-            });
+                $(document).on('click', '#btn-enviar-derivar', function () {
+                    var departamento = $('#select-departamento').val(); // ID del departamento seleccionado
+                    var docId = $('#modaltramitar').data('id'); // ID del documento asociado al modal
 
+                    if (!departamento) {
+                        alert('Por favor, selecciona un departamento antes de derivar.');
+                        return;
+                    }
+
+                    // Llamada AJAX para actualizar la base de datos
+                    $.ajax({
+                        url: '../../controller/documento.php?op=derivar',
+                        type: 'POST',
+                        data: { 
+                            doc_id: docId, 
+                            dep_id: departamento 
+                        },
+                        success: function (response) {
+                            var data = JSON.parse(response);
+
+                            if (data.status === 'success') {                                
+                                // Remover la fila del documento derivado
+                                $('button[data-id="' + docId + '"]').closest('tr').remove();
+
+                                // Cerrar el modal después de la acción
+                                $('#modaltramitar').modal('hide'); // Línea que cierra el modal automáticamente
+                            } else {
+                                alert('Error: ' + data.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Error al derivar el documento.');
+                        }
+                    });
+                });
+
+
+                $(document).on('click', '#btn-enviar-anular', function () {
+                    var mensaje = $('#mensaje-anular').val();
+
+                    if (mensaje.trim() === '') {
+                        alert('Por favor, escribe un motivo antes de anular.');
+                        return;
+                    }
+
+                    // Cambiar el botón "Tramitar" a color rojo
+                    var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
+                    tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-danger').text('Anulado');
+
+                    // Mostrar el mensaje al hacer clic nuevamente en "Tramitar"
+                    tramitarButton.off('click').on('click', function () {
+                        alert('El registro fue anulado. Motivo: ' + mensaje);
+                    });
+
+                    // Opcional: Cerrar el modal después de anular
+                    $('#modaltramitar').modal('hide');
+                });
+            });
         </script>
+
+
     </body>
 </html>
 

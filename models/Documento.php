@@ -51,7 +51,7 @@ class Documento extends Conectar {
         }
 
         // Insertar el detalle del documento
-        $sql="insert into detalledoc values (null, ?, ?, ?, now(), 0, 1);";
+        $sql="insert into detalledoc values (null, ?, ?, ?, now(), 1);";
         $sql=$conectar->prepare($sql);
         $sql->bindValue(1, $doc_id);
         $sql->bindValue(2, $docd_obs);
@@ -75,7 +75,7 @@ class Documento extends Conectar {
     public function list_docdetalle($doc_id){
         $conectar=parent::conexion();
         parent::set_names();
-        $sql="select * from detalledoc where doc_id = ? and seguimiento = 0 and est = 1;";
+        $sql="select * from detalledoc where doc_id = ? and est = 1;";
         $sql=$conectar->prepare($sql);
         $sql->bindValue(1, $doc_id);
         $sql->execute();
@@ -96,11 +96,28 @@ class Documento extends Conectar {
     public function list_doc($usu_id){
         $conectar=parent::conexion();
         parent::set_names();
-        $sql="select * from documento where usu_id = ? and seguimiento = 0 and est = 1;";
+        $sql="select * from documento where usu_id = ? and est = 1;";
         $sql=$conectar->prepare($sql);
         $sql->bindValue(1, $usu_id);
         $sql->execute();
         return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function list_departamento($dep_id_actual) {
+        $sql = "SELECT dep_id, dep_nom FROM departamento WHERE dep_id != ?";
+        $stmt = $this->getConexion()->prepare($sql);
+        $stmt->bindValue(1, $dep_id_actual, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }   
+    
+    public function derivar_documento($doc_id, $new_dep_id) {
+        $sql = "UPDATE documento SET dep_id = ? WHERE doc_id = ?";
+        $stmt = $this->getConexion()->prepare($sql);
+        $stmt->bindValue(1, $new_dep_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $doc_id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
 }
 ?>
