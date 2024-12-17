@@ -392,8 +392,13 @@ if (($_SESSION["dep_id"])) {
                 });
 
                 $(document).on('click', '#btn-enviar-anular', function () {
-                    var resd_obs = $('#motivo-anulacion').val().trim(); // Obtener el motivo de anulación
-                    var docId = $('#modal-anular').data('id'); // ID del documento desde el modal
+                    var resd_obs = $('#mensaje-anular').val().trim(); // Obtener el motivo de anulación
+                    var docId = $('#modaltramitar').data('id'); // ID del documento desde el modal
+
+                    if (!docId) { 
+                        alert('Error: No se pudo obtener el ID del documento.');
+                        return;
+                    }
 
                     if (!resd_obs) {
                         alert('Por favor, escribe un motivo antes de anular.');
@@ -425,6 +430,7 @@ if (($_SESSION["dep_id"])) {
                         }
                     });
                 });
+
 
 
 

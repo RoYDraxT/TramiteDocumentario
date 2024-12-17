@@ -123,26 +123,47 @@
         break;
 
         case "anular":
-            // Extraer y depurar valores de $_POST
+            // Extraer y validar los datos enviados por POST
             $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
-            $dep_id = isset($_POST['dep_id']) ? intval($_POST['dep_id']) : 0;
-            $mensaje = isset($_POST['resd_obs']) ? trim($_POST['resd_obs']) : '';
+            $resd_obs = isset($_POST['resd_obs']) ? trim($_POST['resd_obs']) : '';
+            $dep_id = isset($_SESSION['dep_id']) ? intval($_SESSION['dep_id']) : 0;
         
-            logError("Parámetros recibidos - doc_id: $doc_id, dep_id: $dep_id, mensaje: $mensaje");
-        
-            if ($doc_id > 0 && !empty($mensaje) && $dep_id > 0) {
-                $result = $documento->anular_documento($doc_id, $mensaje, $dep_id);
-                if ($result) {
-                    echo json_encode(["status" => "success", "message" => "El documento ha sido anulado correctamente."]);
-                } else {
-                    logError("Error al anular documento - ID del documento: $doc_id, motivo de anulación: $mensaje, ID del departamento: $dep_id");
-                    echo json_encode(["status" => "error", "message" => "Ocurrió un error al anular el documento."]);
-                }
-            } else {
-                logError("Faltan parámetros: ID del documento: $doc_id, motivo de anulación: $mensaje, ID del departamento: $dep_id");
-                echo json_encode(["status" => "error", "message" => "Faltan parámetros: ID del documento, motivo de anulación o ID del departamento."]);
+            // Validar parámetros obligatorios
+            if ($doc_id <= 0 || empty($resd_obs)) {
+                echo json_encode(["status" => "error", "message" => "Debe proporcionar un motivo para anular el documento y un ID válido."]);
+                exit;
             }
-            break;
+        
+            // Asegurarse de que no se envíe archivo
+            if (isset($_FILES['resd_file']) && $_FILES['resd_file']['error'] == UPLOAD_ERR_OK) {
+                echo json_encode(["status" => "error", "message" => "No se permite adjuntar un archivo al anular un documento."]);
+                exit;
+            }
+        
+            try {
+                // Actualizar el estado y la fecha del documento en la tabla `documento`
+                $result = $documento->actualizar_documento_anulacion($doc_id);
+        
+                if (!$result) {
+                    throw new Exception("Error al actualizar el estado del documento con ID: $doc_id.");
+                }
+        
+                // Insertar el detalle de la anulación en la tabla `detalleres`
+                $detalle_result = $documento->insertar_detalle_anulacion($doc_id, $dep_id, $resd_obs);
+        
+                if (!$detalle_result) {
+                    throw new Exception("Error al registrar el motivo de anulación en el detalle.");
+                }
+        
+                // Respuesta exitosa
+                echo json_encode(["status" => "success", "message" => "El documento ha sido anulado correctamente."]);
+        
+            } catch (Exception $e) {
+                // Loguear el error y enviar mensaje al cliente
+                logError("Error al anular el documento: " . $e->getMessage());
+                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+            }
+            break;             
         
         case "responder":
             // Extraer y validar los datos enviados por POST
@@ -191,7 +212,7 @@
                 logError("Error en el proceso de responder: " . $e->getMessage());
                 echo json_encode(["status" => "error", "message" => $e->getMessage()]);
             }
-        break;
+            break;
             
             
         case "tramitar":
