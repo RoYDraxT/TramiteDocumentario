@@ -3,6 +3,7 @@
     require_once("../models/Documento.php");
     $documento = new Documento();
 
+    
     switch($_GET["op"]){
 
         case "insert":
@@ -121,6 +122,78 @@
             }
         break;
 
+        case "anular":
+            // Extraer y depurar valores de $_POST
+            $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
+            $dep_id = isset($_POST['dep_id']) ? intval($_POST['dep_id']) : 0;
+            $mensaje = isset($_POST['resd_obs']) ? trim($_POST['resd_obs']) : '';
+        
+            logError("Parámetros recibidos - doc_id: $doc_id, dep_id: $dep_id, mensaje: $mensaje");
+        
+            if ($doc_id > 0 && !empty($mensaje) && $dep_id > 0) {
+                $result = $documento->anular_documento($doc_id, $mensaje, $dep_id);
+                if ($result) {
+                    echo json_encode(["status" => "success", "message" => "El documento ha sido anulado correctamente."]);
+                } else {
+                    logError("Error al anular documento - ID del documento: $doc_id, motivo de anulación: $mensaje, ID del departamento: $dep_id");
+                    echo json_encode(["status" => "error", "message" => "Ocurrió un error al anular el documento."]);
+                }
+            } else {
+                logError("Faltan parámetros: ID del documento: $doc_id, motivo de anulación: $mensaje, ID del departamento: $dep_id");
+                echo json_encode(["status" => "error", "message" => "Faltan parámetros: ID del documento, motivo de anulación o ID del departamento."]);
+            }
+            break;
+        
+        case "responder":
+            // Extraer y validar los datos enviados por POST
+            $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
+            $resd_obs = isset($_POST['resd_obs']) ? trim($_POST['resd_obs']) : '';
+            $resd_file = isset($_FILES['resd_file']) && $_FILES['resd_file']['error'] == 0 ? $_FILES['resd_file'] : null;
+        
+            // Validar que el ID del documento es válido y que hay contenido en la respuesta o un archivo
+            if ($doc_id <= 0 || (empty($resd_obs) && !$resd_file)) {
+                echo json_encode(["status" => "error", "message" => "Debe proporcionar una respuesta o adjuntar un archivo."]);
+                exit;
+            }
+        
+            try {
+                // Procesar el archivo si se subió uno
+                $file_name = null;
+                if ($resd_file) {
+                    $upload_dir = "../../public/src/";
+                    $file_name = uniqid() . "_" . basename($resd_file["name"]); // Evitar colisiones de nombres
+                    $file_path = $upload_dir . $file_name;
+        
+                    if (!move_uploaded_file($resd_file["tmp_name"], $file_path)) {
+                        throw new Exception("Error al subir el archivo.");
+                    }
+                }
+        
+                // Actualizar el documento: Seguimiento = 2 y fecha de respuesta
+                $result = $documento->actualizar_documento_respuesta($doc_id);
+        
+                if (!$result) {
+                    throw new Exception("Error al actualizar el documento con ID: $doc_id.");
+                }
+        
+                // Insertar en detalleres
+                $detalle_result = $documento->insertar_detalle_respuesta($doc_id, $_SESSION['dep_id'], $resd_obs, $file_name);
+        
+                if (!$detalle_result) {
+                    throw new Exception("Error al insertar el detalle de la respuesta.");
+                }
+        
+                // Enviar respuesta exitosa
+                echo json_encode(["status" => "success", "message" => "La respuesta ha sido registrada correctamente."]);
+        
+            } catch (Exception $e) {
+                // Loguear error y responder
+                logError("Error en el proceso de responder: " . $e->getMessage());
+                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+            }
+        break;
+            
+            
         case "tramitar":
             $doc_id = isset($_POST["doc_id"]) ? intval($_POST["doc_id"]) : 0;
             
@@ -156,6 +229,8 @@
                 echo json_encode(["status" => "error", "message" => "ID de documento inválido."]);
             }
         break;
+
+        
         
     }
 

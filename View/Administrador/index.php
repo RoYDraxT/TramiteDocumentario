@@ -186,13 +186,17 @@ if (($_SESSION["dep_id"])) {
                                 </div>
 
                                 <div class="tab-pane fade" id="anular" role="tabpanel" aria-labelledby="anular-tab">
-                                    <form id="form-anular">
+                                    <form id="form-anular" class="needs-validation">
                                         <div class="form-group">
-                                            <textarea class="form-control" id="mensaje-anular" rows="4" placeholder="Motivo de la anulación"></textarea>
+                                            <textarea class="form-control" id="mensaje-anular" name="mensaje_anular" rows="4" placeholder="Motivo de la anulación" required></textarea>
+                                            <div class="invalid-feedback">
+                                                Por favor, ingresa un motivo para la anulación.
+                                            </div>
                                         </div>
                                         <button type="button" id="btn-enviar-anular" class="btn btn-danger">Anular</button>
                                     </form>
                                 </div>
+
 
                             </div>
                         </div>
@@ -238,6 +242,8 @@ if (($_SESSION["dep_id"])) {
                     var docId = $(this).data('id'); // Obtener el ID del documento
                     var tramitarButton = $(this);
 
+                    $('#modaltramitar').data('id', docId);
+
                     if (tramitarButton.data('tramite-realizado')) {
                         // Si ya se realizó el trámite, abrir solo el modal sin actualizar la fecha ni seguimiento
                         $('#modaltramitar').data('id', docId);
@@ -268,6 +274,52 @@ if (($_SESSION["dep_id"])) {
                     }
                 });
 
+                $(document).on('click', '#btn-enviar-respuesta', function () {
+                    var docId = $('#modaltramitar').data('id'); // Obtener el ID del documento desde el modal
+                    var respuesta = $('#respuesta').val().trim(); // Capturar texto del textarea
+                    var archivo = $('#archivo-respuesta')[0].files[0]; // Capturar archivo adjunto (si hay)
+
+                    // Validar que haya una respuesta o un archivo
+                    if (!respuesta && !archivo) {
+                        alert('Por favor, escribe una respuesta o adjunta un archivo.');
+                        return;
+                    }
+
+                    // Crear un objeto FormData para enviar los datos al servidor
+                    var formData = new FormData();
+                    formData.append('doc_id', docId);
+                    formData.append('resd_obs', respuesta);
+                    if (archivo) {
+                        formData.append('resd_file', archivo);
+                    }
+
+                    // Enviar los datos mediante AJAX
+                    $.ajax({
+                        url: '../../controller/documento.php?op=responder', // Ruta al controlador
+                        type: 'POST',
+                        data: formData,
+                        processData: false, // No procesar los datos
+                        contentType: false, // No establecer Content-Type automáticamente
+                        dataType: 'json', // Tipo de respuesta esperada
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                alert(response.message);
+                                // Opcional: Cerrar modal o limpiar formulario
+                                $('#form-responder')[0].reset();
+                                $('#modaltramitar').modal('hide');
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error en la solicitud AJAX:', error);
+                            alert('Ocurrió un error al procesar la respuesta.');
+                        }
+                    });
+                });
+
+
+                                
                 $(document).on('click', '[data-target="#modaldetalle"]', function() {
                     var docId = $(this).data('id'); // Obtener el ID del documento
 
@@ -301,29 +353,6 @@ if (($_SESSION["dep_id"])) {
                             $('#detalle_data tbody').html('<tr><td colspan="2">Error al cargar los detalles.</td></tr>');
                         }
                     });
-                });
-
-                $(document).on('click', '#btn-enviar-respuesta', function () {
-                    var respuesta = $('#respuesta').val();
-                    var archivo = $('#archivo-respuesta').val(); // Nombre del archivo adjunto
-
-                    // Validación básica
-                    if (respuesta.trim() === '') {
-                        alert('Por favor, escribe una respuesta antes de enviar.');
-                        return;
-                    }
-
-                    // Cambiar el botón "Tramitar" a color verde
-                    var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
-                    tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-success').text('Tramitado');
-
-                    // Mostrar la información en el modal al hacer clic nuevamente en "Tramitar"
-                    tramitarButton.off('click').on('click', function () {
-                        alert('Respuesta: ' + respuesta + '\nArchivo adjunto: ' + (archivo || 'Ninguno'));
-                    });
-
-                    // Opcional: Cerrar el modal después de enviar
-                    $('#modaltramitar').modal('hide');
                 });
 
                 $(document).on('click', '#btn-enviar-derivar', function () {
@@ -362,27 +391,44 @@ if (($_SESSION["dep_id"])) {
                     });
                 });
 
-
                 $(document).on('click', '#btn-enviar-anular', function () {
-                    var mensaje = $('#mensaje-anular').val();
+                    var resd_obs = $('#motivo-anulacion').val().trim(); // Obtener el motivo de anulación
+                    var docId = $('#modal-anular').data('id'); // ID del documento desde el modal
 
-                    if (mensaje.trim() === '') {
+                    if (!resd_obs) {
                         alert('Por favor, escribe un motivo antes de anular.');
                         return;
                     }
 
-                    // Cambiar el botón "Tramitar" a color rojo
-                    var tramitarButton = $('.btn-tramitar[data-id="' + $('#modaltramitar').data('id') + '"]');
-                    tramitarButton.removeClass('btn-secondary btn-warning').addClass('btn-danger').text('Anulado');
-
-                    // Mostrar el mensaje al hacer clic nuevamente en "Tramitar"
-                    tramitarButton.off('click').on('click', function () {
-                        alert('El registro fue anulado. Motivo: ' + mensaje);
+                    // Enviar los datos al servidor
+                    $.ajax({
+                        url: '../../controller/documento.php?op=anular',
+                        type: 'POST',
+                        data: {
+                            doc_id: docId,
+                            resd_obs: resd_obs
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                alert(response.message);
+                                // Opcional: Cerrar el modal y actualizar la vista
+                                $('#modal-anular').modal('hide');
+                                location.reload();
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error en la solicitud AJAX:', error);
+                            alert('Ocurrió un error al procesar la anulación.');
+                        }
                     });
-
-                    // Opcional: Cerrar el modal después de anular
-                    $('#modaltramitar').modal('hide');
                 });
+
+
+
+
             });
         </script>
     </body>
