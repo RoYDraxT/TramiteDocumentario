@@ -52,7 +52,7 @@
                             </ul>
                             <p>Con nuestro sistema, nos aseguramos de que cada documento llegue a su destino de forma segura y sin contratiempos.</p>
                             <!-- Imagen Ejemplo -->
-                            <img src="public/assets/img/ejemplo.png" alt="Ejemplo de Trámite Documentario" class="img-fluid">
+                            <img src="..\..\public\assets\img\photos\nuevoregistro.PNG" alt="Ejemplo de Trámite Documentario" class="img-fluid">
                         </div>
                     </div>
 
@@ -71,7 +71,7 @@
                             </ol>
                             <p>Puedes ver detalles como la fecha de registro, el estado actual, y cualquier acción pendiente o completada.</p>
                             <!-- Imagen Ejemplo de Consultar Status -->
-                            <img src="public/assets/img/consultar_status.png" alt="Consulta de Status" class="img-fluid">
+                            <img src="..\..\public\assets\img\photos\consultarstatus.PNG" alt="Consulta de Status" class="img-fluid">
                         </div>
                     </div>
 

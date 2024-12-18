@@ -244,6 +244,34 @@
             }
         break;
 
+        case "verificar_tramite":
+            // Extraer y validar los datos enviados por POST
+            $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
+
+            if ($doc_id <= 0) {
+                echo json_encode(["status" => "error", "message" => "ID de documento inválido."]);
+                exit;
+            }
+
+            try {
+                // Obtener el estado de seguimiento del documento
+                $seguimiento = $documento->obtener_estado_tramite($doc_id);
+
+                if ($seguimiento !== false) {
+                    if ($seguimiento === 2 || $seguimiento === 3) {
+                        echo json_encode(["status" => "tramitado", "message" => "Este documento ya ha sido tramitado."]);
+                    } else {
+                        echo json_encode(["status" => "success", "seguimiento" => $seguimiento]);
+                    }
+                } else {
+                    echo json_encode(["status" => "error", "message" => "Error al obtener el estado del documento."]);
+                }
+            } catch (Exception $e) {
+                logError("Error en el proceso de obtener estado del documento: " . $e->getMessage());
+                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+            }
+            break;
+            
         case "obtener_informacion_tramite":
             header('Content-Type: application/json; charset=utf-8');
             try {

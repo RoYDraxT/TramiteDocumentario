@@ -101,9 +101,6 @@
                                                 <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="../">
                                                     <i class="fa fa-user text-muted mr-5"></i> Acceso
                                                 </a>
-                                                <a class="link-effect text-muted mr-10 mb-5 d-inline-block" href="../RecuperarContrasena/">
-                                                    <i class="fa fa-warning mr-5"></i> Olvidé mi Contraseña
-                                                </a>
                                             </div>
                                         </div>
                                     </div>

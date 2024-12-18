@@ -157,7 +157,21 @@ class Documento extends Conectar {
         return $stmt->execute();
     }
 
-    
+    public function obtener_estado_tramite($doc_id) {
+        $this->set_names(); // Establecer el conjunto de caracteres
+
+        $query = "SELECT seguimiento FROM documento WHERE doc_id = ?";
+        $stmt = $this->getConexion()->prepare($query);
+        $stmt->bindValue(1, $doc_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            return intval($result['seguimiento']);
+        } else {
+            return false;
+        }
+    }
 
     public function obtenerInformacionTramite($doc_id) {
         try {

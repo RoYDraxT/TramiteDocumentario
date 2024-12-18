@@ -240,38 +240,54 @@ if (($_SESSION["dep_id"])) {
 
                 $(document).on('click', '.btn-tramitar', function() {
                     var docId = $(this).data('id'); // Obtener el ID del documento
-                    var tramitarButton = $(this);
+                    var button = $(this); // Obtener referencia al botón
 
-                    $('#modaltramitar').data('id', docId);
-
-                    if (tramitarButton.data('tramite-realizado')) {
-                        // Si ya se realizó el trámite, abrir solo el modal sin actualizar la fecha ni seguimiento
-                        $('#modaltramitar').data('id', docId);
-                        return;
-                    }
-
-                    if (confirm('¿Estás seguro de tramitar este documento?')) {
-                        tramitarButton.data('tramite-realizado', true); // Marcar como "realizado" para no volver a preguntar
-                        // Realizar la solicitud AJAX para actualizar los datos
-                        $.ajax({
-                            url: '../../controller/documento.php?op=tramitar',
-                            type: 'POST',
-                            data: { doc_id: docId },
-                            dataType: 'json', // Especificar el tipo de respuesta esperada
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    // Cargar el modal después de tramitar
-                                    $('#modaltramitar').data('id', docId);
-                                } else {
-                                    alert('Error: ' + response.message);
+                    // Solicitud AJAX para obtener el estado de seguimiento del documento
+                    $.ajax({
+                        url: '../../controller/documento.php?op=verificar_tramite', // Asegúrate de tener esta operación en tu PHP
+                        type: 'POST',
+                        data: { doc_id: docId },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'tramitado') {
+                                alert(response.message); // Mostrar mensaje de que ya ha sido tramitado
+                                button.prop('disabled', true); // Deshabilitar el botón
+                                setTimeout(function() {
+                                    $('#modaltramitar').modal('hide'); // Cerrar el modal automáticamente después de 2 segundos
+                                }, 1000); // 1000 milisegundos = 1 segundos
+                                return; // Salir de la función si ya fue tramitado
+                            } else if (response.status === 'success') {
+                                // Si el documento no ha sido tramitado, proceder con la confirmación y actualización
+                                if (confirm('¿Estás seguro de tramitar este documento?')) {
+                                    // Realizar la solicitud AJAX para actualizar los datos
+                                    $.ajax({
+                                        url: '../../controller/documento.php?op=tramitar',
+                                        type: 'POST',
+                                        data: { doc_id: docId },
+                                        dataType: 'json', // Especificar el tipo de respuesta esperada
+                                        success: function(response) {
+                                            if (response.status === 'success') {
+                                                // Cargar el modal después de tramitar
+                                                $('#modaltramitar').data('id', docId).modal('show');
+                                            } else {
+                                                alert('Error: ' + response.message);
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('Error en la solicitud AJAX:', error);
+                                            alert('Error al tramitar el documento.');
+                                        }
+                                    });
                                 }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Error en la solicitud AJAX:', error);
-                                alert('Error al tramitar el documento.');
+                            } else {
+                                alert('Error: ' + response.message);
                             }
-                        });
-                    }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error en la solicitud AJAX:', error);
+                            alert('Error al validar el estado del documento.');
+                        }
+                    });
                 });
 
                 $(document).on('click', '#btn-enviar-respuesta', function () {

@@ -71,6 +71,7 @@ if (isset($_SESSION["usu_id"])) {
                     <div class="block">
                         <div class="block-header block-header-default" style="display: flex; justify-content: space-between; align-items: center;">
                             <h3 class="block-title">Lista de Trámites</h3>
+                            <button onclick="location.href='../Home/index.php';" class="btn btn-primary">Regresar</button>
                         </div>
                         <div class="block-content block-content-full">
                             <table id="doc_data" class="table table-bordered table-striped table-vcenter js-dataTable-full">
