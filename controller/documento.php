@@ -169,51 +169,44 @@
             // Extraer y validar los datos enviados por POST
             $doc_id = isset($_POST['doc_id']) ? intval($_POST['doc_id']) : 0;
             $resd_obs = isset($_POST['resd_obs']) ? trim($_POST['resd_obs']) : '';
-            $resd_file = isset($_FILES['resd_file']) && $_FILES['resd_file']['error'] == 0 ? $_FILES['resd_file'] : null;
-        
+            $resd_file_name = '';
+
             // Validar que el ID del documento es válido y que hay contenido en la respuesta o un archivo
-            if ($doc_id <= 0 || (empty($resd_obs) && !$resd_file)) {
+            if ($doc_id <= 0 || (empty($resd_obs) && empty($_FILES['resd_file']['name']))) {
                 echo json_encode(["status" => "error", "message" => "Debe proporcionar una respuesta o adjuntar un archivo."]);
                 exit;
             }
-        
+
             try {
                 // Procesar el archivo si se subió uno
-                $file_name = null;
-                if ($resd_file) {
-                    $upload_dir = "../../public/src/";
-                    $file_name = uniqid() . "_" . basename($resd_file["name"]); // Evitar colisiones de nombres
-                    $file_path = $upload_dir . $file_name;
-        
-                    if (!move_uploaded_file($resd_file["tmp_name"], $file_path)) {
-                        throw new Exception("Error al subir el archivo.");
-                    }
+                if (!empty($_FILES['resd_file']['name'])) {
+                    $resd_file_name = $documento->upload_file('resd_file');
                 }
-        
+
                 // Actualizar el documento: Seguimiento = 2 y fecha de respuesta
                 $result = $documento->actualizar_documento_respuesta($doc_id);
-        
+
                 if (!$result) {
                     throw new Exception("Error al actualizar el documento con ID: $doc_id.");
                 }
-        
+
                 // Insertar en detalleres
-                $detalle_result = $documento->insertar_detalle_respuesta($doc_id, $_SESSION['dep_id'], $resd_obs, $file_name);
-        
+                $detalle_result = $documento->insertar_detalle_respuesta($doc_id, $_SESSION['dep_id'], $resd_obs, $resd_file_name);
+
                 if (!$detalle_result) {
                     throw new Exception("Error al insertar el detalle de la respuesta.");
                 }
-        
+
                 // Enviar respuesta exitosa
                 echo json_encode(["status" => "success", "message" => "La respuesta ha sido registrada correctamente."]);
-        
+
             } catch (Exception $e) {
                 // Loguear error y responder
                 logError("Error en el proceso de responder: " . $e->getMessage());
                 echo json_encode(["status" => "error", "message" => $e->getMessage()]);
             }
             break;
-            
+    
             
         case "tramitar":
             $doc_id = isset($_POST["doc_id"]) ? intval($_POST["doc_id"]) : 0;
@@ -251,6 +244,35 @@
             }
         break;
 
+        case "obtener_informacion_tramite":
+            header('Content-Type: application/json; charset=utf-8');
+            try {
+                $doc_id = isset($_POST["doc_id"]) ? intval($_POST["doc_id"]) : 0;
+                
+                // Validar doc_id
+                if ($doc_id > 0) {
+                    // Llamar al método y obtener datos
+                    $datos = $documento->obtenerInformacionTramite($doc_id);
+                    
+                    // Validar si los datos son un array o ya están codificados como JSON
+                    if (is_array($datos)) {
+                        $response = json_encode($datos, JSON_UNESCAPED_UNICODE);
+                    } else {
+                        $response = $datos; // Suponiendo que ya es JSON
+                    }
+                    
+                    echo $response; // Enviar respuesta
+                } else {
+                    $error = ["status" => "error", "message" => "ID de documento inválido."];
+                    echo json_encode($error);
+                }
+            } catch (Exception $e) {
+                $error = ["status" => "error", "message" => $e->getMessage()];
+                echo json_encode($error);
+            }
+        break;
+
+        
         
         
     }

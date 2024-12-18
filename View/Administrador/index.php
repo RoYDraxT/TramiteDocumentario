@@ -319,6 +319,7 @@ if (($_SESSION["dep_id"])) {
                 });
 
 
+
                                 
                 $(document).on('click', '[data-target="#modaldetalle"]', function() {
                     var docId = $(this).data('id'); // Obtener el ID del documento

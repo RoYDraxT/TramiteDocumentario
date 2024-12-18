@@ -135,33 +135,73 @@ class Documento extends Conectar {
         return $stmt->execute(); // Devuelve true si la ejecución es exitosa
     }    
     
+
     public function actualizar_documento_respuesta($doc_id) {
-        try {
-            $sql = "UPDATE documento SET seguimiento = 2, fech_resp = NOW() WHERE doc_id = ?";
-            $stmt = $this->getConexion()->prepare($sql);
-            $stmt->bindValue(1, $doc_id, PDO::PARAM_INT);
-    
-            if ($stmt->execute()) {
-                return true;
-            } else {
-                throw new Exception("No se pudo actualizar el estado de seguimiento del documento.");
-            }
-        } catch (PDOException $e) {
-            logError("Error al responder documento: " . $e->getMessage());
-            return false;
-        }
-    }    
-     
+        $this->set_names(); // Establecer el conjunto de caracteres
+
+        $query = "UPDATE documento SET seguimiento = 2, fech_resp = NOW() WHERE doc_id = ?";
+        $stmt = $this->getConexion()->prepare($query);
+        $stmt->bindValue(1, $doc_id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
     public function insertar_detalle_respuesta($doc_id, $dep_id, $resd_obs, $resd_file) {
-        $sql = "INSERT INTO detalleres (doc_id, dep_id, resd_obs, resd_file, fech_crea) VALUES (?, ?, ?, ?, NOW())";
-        $stmt = $this->getConexion()->prepare($sql);
+        $this->set_names(); // Establecer el conjunto de caracteres
+
+        $query = "INSERT INTO detalleres (doc_id, dep_id, resd_obs, resd_file, fech_crea) VALUES (?, ?, ?, ?, NOW())";
+        $stmt = $this->getConexion()->prepare($query);
         $stmt->bindValue(1, $doc_id, PDO::PARAM_INT);
         $stmt->bindValue(2, $dep_id, PDO::PARAM_INT);
         $stmt->bindValue(3, $resd_obs, PDO::PARAM_STR);
         $stmt->bindValue(4, $resd_file, PDO::PARAM_STR);
         return $stmt->execute();
-    }    
+    }
 
+    
+
+    public function obtenerInformacionTramite($doc_id) {
+        try {
+            $this->set_names(); // Establecer el conjunto de caracteres
+
+            // Consulta a la tabla `documento`
+            $query = "SELECT d.doc_id, d.dep_id, d.fech_visto, d.fech_resp, d.seguimiento, dep.dep_nom 
+                      FROM documento d 
+                      INNER JOIN departamento dep ON d.dep_id = dep.dep_id 
+                      WHERE d.doc_id = ?";
+            $stmt = $this->getConexion()->prepare($query);
+            $stmt->bindValue(1, $doc_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Validar si se encontró el documento
+            if (!$result) {
+                error_log("Documento no encontrado para doc_id: {$doc_id}");
+                return json_encode(["status" => "error", "message" => "Documento no encontrado."]);
+            }
+
+            // Obtener detalles de `detalleres` si el seguimiento es `Respondido` o `Anulado`
+            $respuesta = null;
+            if ($result['seguimiento'] == 2 || $result['seguimiento'] == 3) {
+                $query_respuesta = "SELECT resd_obs, resd_file FROM detalleres WHERE doc_id = ?";
+                $stmt_respuesta = $this->getConexion()->prepare($query_respuesta);
+                $stmt_respuesta->bindValue(1, $doc_id, PDO::PARAM_INT);
+                $stmt_respuesta->execute();
+                $respuesta = $stmt_respuesta->fetch(PDO::FETCH_ASSOC);
+            }
+            
+            return json_encode([
+                "status" => "success", 
+                "dep_nom" => $result['dep_nom'], 
+                "fech_visto" => $result['fech_visto'], 
+                "fech_resp" => $result['fech_resp'], 
+                "seguimiento" => $result['seguimiento'],
+                "respuesta" => $respuesta
+            ]);
+        } catch (Exception $e) {
+            error_log("Error en obtenerInformacionTramite: " . $e->getMessage());
+            return json_encode(["status" => "error", "message" => "Ocurrió un error al procesar los datos."]);
+        }
+    }
     
 }
 ?>
